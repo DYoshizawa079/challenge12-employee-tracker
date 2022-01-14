@@ -34,6 +34,10 @@ IF "add a department" selected
 - RUN FUNCTION: Present options
 
 IF "add a role" selected
+- Generate options for departments
+    - Generate list of departments available
+    - Get array of all department rows
+    - Generate list of options based on department rows
 - Prompt to enter the name, salary, and department for the role 
 - Add that role to the database
 - RUN FUNCTION: Present options

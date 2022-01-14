@@ -23,6 +23,28 @@ const actions = function(response, connection){
             prompts(connection);
         });
     }
+    if(response.Options === 'view all employees by manager') {
+
+        const managerInput = async() => {
+            const answer = await inquirer.prompt([
+                {
+                    type: "input",
+                    name: "manager",
+                    message: "Enter the ID number of the manager"
+                }
+            ])
+            console.log(answer);
+            connection.query("SELECT * FROM employee WHERE manager_id = " + answer.manager, (err, result) => {
+                if(err) {
+                    console.log("You entered the wrong info.");
+                } else {
+                    console.table(result);
+                }
+                prompts(connection);
+            });
+        }
+        managerInput();
+    }
     if(response.Options === 'add a department') {
 
         const departmentInput = async() => {
@@ -44,8 +66,28 @@ const actions = function(response, connection){
     }
     if(response.Options === 'add a role') {
 
+        let deptList = () => {
+            return new Promise((resolve, reject)=>{
+                connection.query("SELECT * FROM department",  (error, results)=>{
+                    if(error){
+                        return reject(error);
+                    }
+                    console.log(results);
+                    return resolve(results);
+                });
+            });
+        };
+        
         const roleInput = async() => {
-            const answer = await inquirer.prompt([
+            
+            let departmentList = await deptList(); 
+            let departmentListIDarr = [];
+            departmentList.forEach(function(item, index) {
+                departmentListIDarr.push(item.name);
+            })
+            const answer = await 
+                
+                inquirer.prompt([
                 {
                     type: "input",
                     name: "role",
@@ -57,12 +99,18 @@ const actions = function(response, connection){
                     message: "Enter the salary for the new role"
                 },
                 {
-                    type: "input",
+                    type: "list",
                     name: "department",
-                    message: "Enter the department that the new role pertains to"
+                    message: "Enter the department that the new role pertains to",
+                    choices: departmentListIDarr
                 }
             ])
             console.log(answer);
+            for (let i = 0; i < departmentList.length; i++) {
+                if (answer.department === departmentList[i].name) {
+                    answer.department = i + 1;
+                }
+            }
             connection.query('INSERT INTO role (name, salary, department_id) VALUES ("' + answer.role + '",' + answer.salary + ',' + answer.department + ');', (err) => {
                 console.log(err);
             });
@@ -105,6 +153,30 @@ const actions = function(response, connection){
         employeeInput();
         
     }
+    if(response.Options === 'update an employee role') {
+
+        const employeeInput = async() => {
+            const answer = await inquirer.prompt([
+                {
+                    type: "input",
+                    name: "id",
+                    message: "Select the employee by his ID number"
+                },
+                {
+                    type: "input",
+                    name: "role_id",
+                    message: "Enter the employee's new role by its ID number"
+                }
+            ])
+            console.log(answer);
+            connection.query('UPDATE employee SET role_id = ' + answer.role_id + ' WHERE id = ' + answer.id , (err) => {
+                console.log(err);
+            });
+            prompts(connection);
+        }
+        employeeInput();
+        
+    }
 
 }
 
@@ -116,11 +188,12 @@ const prompts = function (connection) {
             message: "What would you like to do?",
             choices: ["view all departments", 
                 "view all roles", 
-                "view all employees", 
+                "view all employees",
+                "view all employees by manager", 
                 "add a department", 
                 "add a role", 
                 "add an employee", 
-                "and update an employee role"]
+                "update an employee role"]
         }
     ]).then( function(response) {
             actions(response, connection);
