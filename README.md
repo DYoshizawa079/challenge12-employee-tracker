@@ -8,7 +8,7 @@ Walkthrough Video: [Click here to watch](https://)
 ## Table of Contents
 * [Installation](#installation)
 * [Usage](#usage)
-* [Credits/Contributors](#Credits/Contributors)
+* [Contributor](#Contributor)
 * [Questions](#questions)
 ## Installation
 A node.js environement with the Inquirer and MySQL2 package is required to run the app. 
@@ -17,7 +17,7 @@ A screenshot of the app in use is shown below:
 
 ![The app in use](https://raw.githubusercontent.com/DYoshizawa079/challenge12-employee-tracker/main/images/screenshot.png)
 
-## Credits/Contributors
+## Contributor
 Daniel Yoshizawa
 
 ## Questions
