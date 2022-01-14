@@ -2,7 +2,8 @@
 
 const mysql = require('mysql2');
 const fs = require("fs");
-const inquirer = require('inquirer');
+
+const prompts = require('./functions/prompts.js');
 require('dotenv').config();
 
 // Set up and test connection to MySQL database
@@ -35,14 +36,6 @@ const connect = async () => {
     //console.log(seedQuery);
     const seedQueryArr2 = seedQuery2.toString().split(');');
 
-    // Run the queries
-    /* connection.query("CREATE DATABASE IF NOT EXISTS challenge12_employee_tracker", (err) => {
-        console.log(err);
-    });
-    connection.query("USE challenge12_employee_tracker", (err) => {
-        console.log(err);
-    }); */
-
     // Run each file line by line
     dbQueryArr.forEach((query) => {
         if(query) {
@@ -72,43 +65,9 @@ const connect = async () => {
         }
     });
 
-    // Inquirer prompt
-    inquirer.prompt([
-        {
-            type: "list",
-            name: "Options",
-            message: "What would you like to do?",
-            choices: ["view all departments", 
-                "view all roles", 
-                "view all employees", 
-                "add a department", 
-                "add a role", 
-                "add an employee", 
-                "and update an employee role"]
-        }
-    ]).then(
-        function (response) {
-            console.log(response.Options);
-            if(response.Options === 'view all departments') {
-                connection.query("SELECT * FROM department", (err, result) => {
-                    console.log(err);
-                    console.table(result);
-                });
-            }
-            if(response.Options === 'view all roles') {
-                connection.query("SELECT * FROM role", (err, result) => {
-                    console.log(err);
-                    console.table(result);
-                });
-            }
-            if(response.Options === 'view all employees') {
-                connection.query("SELECT * FROM employee", (err, result) => {
-                    console.log(err);
-                    console.table(result);
-                });
-            }
-        }
-    );
+    // Load the inquirer prompts
+    prompts(connection);
+    
 }
 connect();
 
