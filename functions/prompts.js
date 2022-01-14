@@ -25,7 +25,7 @@ const actions = function(response, connection){
         });
     }
     if(response.Options === 'View all roles') {
-        connection.query("SELECT * FROM role", (err, result) => {
+        connection.query("select title, role.id, name as department, salary from role join department on role.department_id = department.id", (err, result) => {
             if (err) {
                 console.log(err);
             } else {
@@ -35,7 +35,7 @@ const actions = function(response, connection){
         });
     }
     if(response.Options === 'View all employees') {
-        connection.query("SELECT * FROM employee", (err, result) => {
+        connection.query("select employee.id, first_name, last_name, title, department.name as department, salary, manager_id from employee join role on employee.role_id = role.id join department on role.department_id = department.id", (err, result) => {
             if (err) {
                 console.log(err);
             } else {
@@ -139,7 +139,7 @@ const actions = function(response, connection){
                 }
             }
 
-            connection.query('INSERT INTO role (name, salary, department_id) VALUES ("' + answer.role + '",' + answer.salary + ',' + answer.department + ');', (err) => {
+            connection.query('INSERT INTO role (title, salary, department_id) VALUES ("' + answer.role + '",' + answer.salary + ',' + answer.department + ');', (err) => {
                 if (err) {
                     console.log(err);
                 }
@@ -159,7 +159,7 @@ const actions = function(response, connection){
             // Array that lists only the names of the roles
             let rolesListNamearr = [];
             rolesList.forEach(function(item) {
-                rolesListNamearr.push(item.name);
+                rolesListNamearr.push(item.title);
             })
 
             const answer = await inquirer.prompt([
@@ -188,7 +188,7 @@ const actions = function(response, connection){
 
             // Discern the role ID number based on the user's response
             for (let i = 0; i < rolesList.length; i++) {
-                if (answer.role === rolesList[i].name) {
+                if (answer.role === rolesList[i].title) {
                     answer.role = i + 1;
                 }
             }
@@ -213,7 +213,7 @@ const actions = function(response, connection){
             // Array that lists only the names of the roles
             let rolesListNamearr = [];
             rolesList.forEach(function(item) {
-                rolesListNamearr.push(item.name);
+                rolesListNamearr.push(item.title);
             }) 
 
             const answer = await inquirer.prompt([
@@ -232,7 +232,7 @@ const actions = function(response, connection){
 
             // Discern the role ID number based on the user's response
             for (let i = 0; i < rolesList.length; i++) {
-                if (answer.role_id === rolesList[i].name) {
+                if (answer.role_id === rolesList[i].title) {
                     answer.role_id = i + 1;
                 }
             }

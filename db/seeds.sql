@@ -3,7 +3,7 @@ VALUES
     (1, 'Management'),
     (2, 'Design & Production');
 
-INSERT INTO role (id, name, salary, department_id)
+INSERT INTO role (id, title, salary, department_id)
 VALUES
     (1, 'Owner', 100000.00, 1),
     (2, 'Manager', 900000.00, 1),
