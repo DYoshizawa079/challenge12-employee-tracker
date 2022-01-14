@@ -1,29 +1,50 @@
 const inquirer = require('inquirer');
 
+// Get the list of all roles that is in the DB
+let roleList = (connection) => {
+    return new Promise((resolve, reject)=>{
+        connection.query("SELECT * FROM role",  (error, results)=>{
+            if(error){
+                return reject(error);
+            }
+            return resolve(results);
+        });
+    });
+};
+
+// Actions that are to be carried out according to the user's responses to the prompts
 const actions = function(response, connection){
-    console.log(response.Options);
-    if(response.Options === 'view all departments') {
+    if(response.Options === 'View all departments') {
         connection.query("SELECT * FROM department", (err, result) => {
-            console.log(err);
-            console.table(result);
+            if (err) {
+                console.log(err);
+            } else {
+                console.table(result);
+            }
             prompts(connection);
         });
     }
-    if(response.Options === 'view all roles') {
+    if(response.Options === 'View all roles') {
         connection.query("SELECT * FROM role", (err, result) => {
-            console.log(err);
-            console.table(result);
+            if (err) {
+                console.log(err);
+            } else {
+                console.table(result);
+            }
             prompts(connection);
         });
     }
-    if(response.Options === 'view all employees') {
+    if(response.Options === 'View all employees') {
         connection.query("SELECT * FROM employee", (err, result) => {
-            console.log(err);
-            console.table(result);
+            if (err) {
+                console.log(err);
+            } else {
+                console.table(result);
+            }
             prompts(connection);
         });
     }
-    if(response.Options === 'view all employees by manager') {
+    if(response.Options === 'View all employees by manager') {
 
         const managerInput = async() => {
             const answer = await inquirer.prompt([
@@ -33,7 +54,6 @@ const actions = function(response, connection){
                     message: "Enter the ID number of the manager"
                 }
             ])
-            console.log(answer);
             connection.query("SELECT * FROM employee WHERE manager_id = " + answer.manager, (err, result) => {
                 if(err) {
                     console.log("You entered the wrong info.");
@@ -45,7 +65,7 @@ const actions = function(response, connection){
         }
         managerInput();
     }
-    if(response.Options === 'add a department') {
+    if(response.Options === 'Add a department') {
 
         const departmentInput = async() => {
             const answer = await inquirer.prompt([
@@ -55,24 +75,25 @@ const actions = function(response, connection){
                     message: "Enter the name of the new department"
                 }
             ])
-            console.log(answer);
             connection.query('INSERT INTO department (name) VALUES ("' + answer.department + '");', (err) => {
-                console.log(err);
+                if (err) {
+                    console.log(err);
+                }
             });
             prompts(connection);
         }
         departmentInput();
         
     }
-    if(response.Options === 'add a role') {
+    if(response.Options === 'Add a role') {
 
+        // Get the list of all departments that is in the DB
         let deptList = () => {
             return new Promise((resolve, reject)=>{
                 connection.query("SELECT * FROM department",  (error, results)=>{
                     if(error){
                         return reject(error);
                     }
-                    console.log(results);
                     return resolve(results);
                 });
             });
@@ -80,11 +101,16 @@ const actions = function(response, connection){
         
         const roleInput = async() => {
             
+            // Array that lists all of the info of the departments
             let departmentList = await deptList(); 
-            let departmentListIDarr = [];
-            departmentList.forEach(function(item, index) {
-                departmentListIDarr.push(item.name);
+
+            // Array that lists only the names of the departments
+            let departmentListNamearr = [];
+            departmentList.forEach(function(item) {
+                departmentListNamearr.push(item.name);
             })
+
+            // Prompt the user
             const answer = await 
                 
                 inquirer.prompt([
@@ -102,26 +128,40 @@ const actions = function(response, connection){
                     type: "list",
                     name: "department",
                     message: "Enter the department that the new role pertains to",
-                    choices: departmentListIDarr
+                    choices: departmentListNamearr
                 }
             ])
-            console.log(answer);
+
+            // Discern the department ID number based on the user's response
             for (let i = 0; i < departmentList.length; i++) {
                 if (answer.department === departmentList[i].name) {
                     answer.department = i + 1;
                 }
             }
+
             connection.query('INSERT INTO role (name, salary, department_id) VALUES ("' + answer.role + '",' + answer.salary + ',' + answer.department + ');', (err) => {
-                console.log(err);
+                if (err) {
+                    console.log(err);
+                }
             });
             prompts(connection);
         }
         roleInput();
         
     }
-    if(response.Options === 'add an employee') {
+    if(response.Options === 'Add an employee') {
 
         const employeeInput = async() => {
+
+            // Array that lists all of the info of the roles
+            let rolesList = await roleList(connection); 
+
+            // Array that lists only the names of the roles
+            let rolesListNamearr = [];
+            rolesList.forEach(function(item) {
+                rolesListNamearr.push(item.name);
+            })
+
             const answer = await inquirer.prompt([
                 {
                     type: "input",
@@ -134,28 +174,48 @@ const actions = function(response, connection){
                     message: "Enter the last name of the employee"
                 },
                 {
-                    type: "input",
+                    type: "list",
                     name: "role",
-                    message: "Enter the role that is assigned to the employee"
+                    message: "Select the role that is assigned to the employee",
+                    choices: rolesListNamearr
                 },
                 {
                     type: "input",
                     name: "manager",
-                    message: "Enter the manager that the employee needs to report to"
+                    message: "Enter the ID of the manager that the employee needs to report to"
                 }
             ])
-            console.log(answer);
+
+            // Discern the role ID number based on the user's response
+            for (let i = 0; i < rolesList.length; i++) {
+                if (answer.role === rolesList[i].name) {
+                    answer.role = i + 1;
+                }
+            }
+
             connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("' + answer.first_name + '", "' + answer.last_name + '", ' + answer.role + ',' + answer.manager + ');', (err) => {
-                console.log(err);
+                if (err) {
+                    console.log(err);
+                }
             });
             prompts(connection);
         }
         employeeInput();
         
     }
-    if(response.Options === 'update an employee role') {
+    if(response.Options === 'Update an employee role') {
 
         const employeeInput = async() => {
+
+             // Array that lists all of the info of the roles
+            let rolesList = await roleList(connection); 
+
+            // Array that lists only the names of the roles
+            let rolesListNamearr = [];
+            rolesList.forEach(function(item) {
+                rolesListNamearr.push(item.name);
+            }) 
+
             const answer = await inquirer.prompt([
                 {
                     type: "input",
@@ -163,14 +223,23 @@ const actions = function(response, connection){
                     message: "Select the employee by his ID number"
                 },
                 {
-                    type: "input",
+                    type: "list",
                     name: "role_id",
-                    message: "Enter the employee's new role by its ID number"
+                    message: "Select the new role that is assigned to the employee",
+                    choices: rolesListNamearr
                 }
             ])
-            console.log(answer);
+
+            // Discern the role ID number based on the user's response
+            for (let i = 0; i < rolesList.length; i++) {
+                if (answer.role_id === rolesList[i].name) {
+                    answer.role_id = i + 1;
+                }
+            }
             connection.query('UPDATE employee SET role_id = ' + answer.role_id + ' WHERE id = ' + answer.id , (err) => {
-                console.log(err);
+                if (err) {
+                    console.log(err);
+                }
             });
             prompts(connection);
         }
@@ -180,20 +249,21 @@ const actions = function(response, connection){
 
 }
 
+// Inital prompts for the user
 const prompts = function (connection) {
     inquirer.prompt([
         {
             type: "list",
             name: "Options",
             message: "What would you like to do?",
-            choices: ["view all departments", 
-                "view all roles", 
-                "view all employees",
-                "view all employees by manager", 
-                "add a department", 
-                "add a role", 
-                "add an employee", 
-                "update an employee role"]
+            choices: ["View all departments", 
+                "View all roles", 
+                "View all employees",
+                "View all employees by manager", 
+                "Add a department", 
+                "Add a role", 
+                "Add an employee", 
+                "Update an employee role"]
         }
     ]).then( function(response) {
             actions(response, connection);
