@@ -1,0 +1,3 @@
+DROP DATABASE IF EXISTS challenge12_employee_tracker;
+CREATE DATABASE challenge12_employee_tracker;
+USE challenge12_employee_tracker;

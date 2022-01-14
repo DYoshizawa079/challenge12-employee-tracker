@@ -1,0 +1,49 @@
+WHEN I start the application
+
+Create database challenge12-employee-tracker only if it doesnt exist
+Create department table
+Create role (job title) table
+Create employee table
+Seed all tables
+
+FUNCTION: Present options
+Present the following options: 
+(view all departments, 
+view all roles, 
+view all employees, 
+add a department, 
+add a role, 
+add an employee, 
+and update an employee role)
+
+IF "view all departments" selected
+- Present a table showing department names and department ids
+- RUN FUNCTION: Present options
+
+IF "view all roles" selected
+- Present the job title, role id, the department that role belongs to, and the salary for that role
+- RUN FUNCTION: Present options
+
+IF "view all employees" selected
+- Present a table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
+- RUN FUNCTION: Present options
+
+IF "add a department" selected
+- Prompt to enter the name of the department
+- Add that department to the database
+- RUN FUNCTION: Present options
+
+IF "add a role" selected
+- Prompt to enter the name, salary, and department for the role 
+- Add that role to the database
+- RUN FUNCTION: Present options
+
+IF "add an employee" selected
+- Prompt to enter the employee’s first name, last name, role, and manager
+- Add that employee to the database
+- RUN FUNCTION: Present options
+
+IF "update an employee role" is selected
+- Prompt to select an employee to update and their new role
+- Update that info in the database
+- RUN FUNCTION: Present options

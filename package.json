@@ -2,13 +2,13 @@
   "dependencies": {
     "console.table": "^0.10.0",
     "dotenv": "^11.0.0",
-    "inquirer": "^8.2.0"
+    "inquirer": "^8.2.0",
+    "mysql2": "^2.3.3"
   },
   "name": "challenge12-employee-tracker",
   "description": "",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "start": "node index.js"
   },
