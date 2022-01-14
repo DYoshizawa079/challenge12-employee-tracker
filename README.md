@@ -8,14 +8,14 @@ Walkthrough Video: [Click here to watch](https://)
 ## Table of Contents
 * [Installation](#installation)
 * [Usage](#usage)
-* [Credits/Contributors](#credits)
+* [Credits/Contributors](#Credits/Contributors)
 * [Questions](#questions)
 ## Installation
 A node.js environement with the Inquirer and MySQL2 package is required to run the app. 
 ## Usage
 A screenshot of the app in use is shown below:
 
-![The app in use](https://github.com/DYoshizawa079/challenge11-note-taker/blob/dev/images/screenshot.jpg?raw=true)
+![The app in use](https://raw.githubusercontent.com/DYoshizawa079/challenge12-employee-tracker/main/images/screenshot.png)
 
 ## Credits/Contributors
 Daniel Yoshizawa
