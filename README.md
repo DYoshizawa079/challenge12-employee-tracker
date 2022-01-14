@@ -3,7 +3,7 @@
 ## Description
 A command-line application to manage a (fictional) company's employee database using Node.js, Inquirer, and MySQL.
 
-Walkthrough Video: [Click here to watch](https://)
+Walkthrough Video: [Click here to watch](https://drive.google.com/file/d/1cEVOnoSqDufLx8GKcsc-KhDyFFFDTVDI/view?usp=sharing)
 
 ## Table of Contents
 * [Installation](#installation)
