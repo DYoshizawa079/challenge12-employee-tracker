@@ -9,6 +9,26 @@ const connection = mysql.createConnection({
     user: process.env.DB_USER,
     password: process.env.DB_PW,
 });
+
+// Process the mysql and seed files
+/* Function passes statements line by line into a .query() method
+For some reason, .query() doesn't handle multiple lines at once */
+const runDbQueries = function(dbQuery, delimiter) {
+    let dbQueryArray = dbQuery.toString().split(delimiter);
+    dbQueryArray.forEach((query) => {
+        if(query) {
+            // Add the delimiter back to each query before you run them
+            query += delimiter;
+            connection.query(query, (err) => {
+                if (err) {
+                    console.log(err);
+                }
+            })
+        }
+    });
+}
+
+
 const connect = async () => {
 
     // Make the connection
@@ -18,50 +38,15 @@ const connect = async () => {
         }
     });
 
-    // Load the seed queries
+    // Load the mysql and seed files
     const dbQuery = await fs.readFileSync("db/db.sql").toString();
-    const dbQueryArr = dbQuery.toString().split(';');
-
     const seedQuery = await fs.readFileSync("db/schema.sql").toString();
-    const seedQueryArr = seedQuery.toString().split(');');
-
     const seedQuery2 = await fs.readFileSync("db/seeds.sql").toString();
-    const seedQueryArr2 = seedQuery2.toString().split(');');
 
-    // Run each file line by line
-    dbQueryArr.forEach((query) => {
-        if(query) {
-            // Add the delimiter back to each query before you run them
-            query += ';';
-            connection.query(query, (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            })
-        }
-    });
-    seedQueryArr.forEach((query) => {
-        if(query) {
-            // Add the delimiter back to each query before you run them
-            query += ');';
-            connection.query(query, (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            })
-        }
-    });
-    seedQueryArr2.forEach((query) => {
-        if(query) {
-            // Add the delimiter back to each query before you run them
-            query += ');';
-            connection.query(query, (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            })
-        }
-    });
+    // Process the seed queries. The second parameter is for the delimiter that splits each line in their respective mysql and seed files
+    runDbQueries(dbQuery, ';');
+    runDbQueries(seedQuery, ');');
+    runDbQueries(seedQuery2, ');');
 
     // Load the inquirer prompts
     prompts(connection);

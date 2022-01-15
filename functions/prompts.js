@@ -12,36 +12,31 @@ let roleList = (connection) => {
     });
 };
 
+// Process results from making MySQL queries
+const processResults = function (connection, err, result) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.table(result);
+    }
+    prompts(connection);
+}
+
 // Actions that are to be carried out according to the user's responses to the prompts
-const actions = function(response, connection){
+const responses = function(response, connection){
     if(response.Options === 'View all departments') {
         connection.query("SELECT * FROM department", (err, result) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.table(result);
-            }
-            prompts(connection);
+            processResults(connection, err, result);
         });
     }
     if(response.Options === 'View all roles') {
         connection.query("select title, role.id, name as department, salary from role join department on role.department_id = department.id", (err, result) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.table(result);
-            }
-            prompts(connection);
+            processResults(connection, err, result);
         });
     }
     if(response.Options === 'View all employees') {
         connection.query("select employee.id, first_name, last_name, title, department.name as department, salary, manager_id from employee join role on employee.role_id = role.id join department on role.department_id = department.id", (err, result) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.table(result);
-            }
-            prompts(connection);
+            processResults(connection, err, result);
         });
     }
     if(response.Options === 'View all employees by manager') {
@@ -55,15 +50,11 @@ const actions = function(response, connection){
                 }
             ])
             connection.query("SELECT * FROM employee WHERE manager_id = " + answer.manager, (err, result) => {
-                if(err) {
-                    console.log("You entered the wrong info.");
-                } else {
-                    console.table(result);
-                }
-                prompts(connection);
+                processResults(connection, err, result);
             });
         }
         managerInput();
+
     }
     if(response.Options === 'Add a department') {
 
@@ -112,7 +103,6 @@ const actions = function(response, connection){
 
             // Prompt the user
             const answer = await 
-                
                 inquirer.prompt([
                 {
                     type: "input",
@@ -266,7 +256,7 @@ const prompts = function (connection) {
                 "Update an employee role"]
         }
     ]).then( function(response) {
-            actions(response, connection);
+            responses(response, connection);
         }
     );
 }
