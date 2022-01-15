@@ -1,3 +1,7 @@
+DROP DATABASE IF EXISTS challenge12_employee_tracker;
+CREATE DATABASE challenge12_employee_tracker;
+USE challenge12_employee_tracker;
+
 CREATE TABLE if not exists department (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30) NOT NULL

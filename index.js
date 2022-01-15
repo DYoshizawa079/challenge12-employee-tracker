@@ -39,14 +39,12 @@ const connect = async () => {
     });
 
     // Load the mysql and seed files
-    const dbQuery = await fs.readFileSync("db/db.sql").toString();
     const seedQuery = await fs.readFileSync("db/schema.sql").toString();
     const seedQuery2 = await fs.readFileSync("db/seeds.sql").toString();
 
     // Process the seed queries. The second parameter is for the delimiter that splits each line in their respective mysql and seed files
-    runDbQueries(dbQuery, ';');
-    runDbQueries(seedQuery, ');');
-    runDbQueries(seedQuery2, ');');
+    runDbQueries(seedQuery, ';');
+    runDbQueries(seedQuery2, ';');
 
     // Load the inquirer prompts
     prompts(connection);
